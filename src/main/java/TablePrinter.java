@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -5,6 +7,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class TablePrinter {
+    public static boolean fileFlag = false;
     public static List<Double> addToList(double... values) {
         List<Double> collection = new ArrayList<>();
         for (double value : values) {
@@ -14,11 +17,7 @@ public class TablePrinter {
         return collection;
     }
     public static void printTable(List<String> headers, List<List<Double>> tableData) {
-        // Проверка на наличие данных
-        if (tableData == null || tableData.isEmpty() || headers == null || headers.isEmpty()) {
-            System.out.println("Нет данных для вывода.");
-            return;
-        }
+        StringBuilder resultTable = new StringBuilder();
 
         // Вычисляем максимальную ширину каждого столбца
         List<Integer> columnWidths = headers.stream()
@@ -46,9 +45,9 @@ public class TablePrinter {
                 .collect(Collectors.joining()) + "+\n";
 
         // Печатаем разделитель, заголовки и разделитель после заголовков
-        System.out.print(separator);
-        System.out.printf(format, headers.toArray());
-        System.out.print(separator);
+        resultTable.append(separator);
+        resultTable.append(String.format(format, headers.toArray()));
+        resultTable.append(separator);
 
         // Печатаем данные таблицы
         for (int i = 0; i < tableData.size(); i++) {
@@ -58,8 +57,19 @@ public class TablePrinter {
                             Stream.of(String.format("%-" + columnWidths.get(0) + "d", i + 1)),
                             rowData.stream().map(d -> String.format("%.5f", d)))
                     .collect(Collectors.toList());
-            System.out.printf(format, formattedRow.toArray());
-            System.out.print(separator);
+            resultTable.append(String.format(format, formattedRow.toArray()));
+            resultTable.append(separator);
+        }
+
+        // Печать в консоль или запись в файл в зависимости от флага
+        if (fileFlag) {
+            try (FileWriter writer = new FileWriter("output.txt")) {
+                writer.write(resultTable.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.print(resultTable);
         }
     }
 

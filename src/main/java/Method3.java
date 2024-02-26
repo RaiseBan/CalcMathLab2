@@ -42,7 +42,9 @@ public class Method3 {
             double functionDerivative = Functions.derivative1(funcNumber, x);
 
             double nextX = x - functionValue/functionDerivative;
-            if (Math.abs(nextX - x) <= epsilon){
+            if (Math.abs(nextX - x) <= epsilon ||
+                    Math.abs(function.apply(nextX)/Functions.derivative1(funcNumber, nextX)) <= epsilon ||
+                    Math.abs(function.apply(nextX)) <= epsilon ){
                 break;
             }
             rowData = TablePrinter.addToList(x, functionValue, functionDerivative, nextX, Math.abs(nextX - x));

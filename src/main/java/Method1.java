@@ -32,15 +32,12 @@ public class Method1 {
                 b = x;
             }
             n++;
-            if (Math.abs(a - b) <= e || Math.abs(selectedFunction.apply(x)) < e) {
+            if (Math.abs(a - b) <= e || Math.abs(selectedFunction.apply(x)) <= e) {
                 break;
             }
         }
         List<String> headers = new ArrayList<>(Arrays.asList("a", "b", "x", "F(a)", "F(b)", "F(x)", "|a-b|"));
         TablePrinter.printTable(headers, tableData);
-
-        // надо вывести x, f(x), n
-
 
     }
 

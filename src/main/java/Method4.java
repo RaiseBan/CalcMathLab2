@@ -14,7 +14,7 @@ public class Method4 {
             double f2 = function.apply(x2);
             rowData = TablePrinter.addToList(x0, x1, x2, f2, Math.abs(x2 - x1));
             tableData.add(rowData);
-            if (Math.abs(x2 - x1) < e){
+            if (Math.abs(x2 - x1) <= e || Math.abs(function.apply(x2)) <= e){
                 break;
             }
 
