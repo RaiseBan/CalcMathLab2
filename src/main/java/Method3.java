@@ -36,15 +36,19 @@ public class Method3 {
     public static void runMethod(double initialApproximation, double epsilon, int maxIterations, Function function, int funcNumber){
         double x = initialApproximation;
         List<List<Double>> tableData = new ArrayList<>();
-        List<Double> rowData;
+        List<Double> rowData = null;
+        float lastFunc = 0;
+        int n = 0;
         for (int i = 0; i < maxIterations; i++){
             double functionValue = function.apply(x);
             double functionDerivative = Functions.derivative1(funcNumber, x);
 
             double nextX = x - functionValue/functionDerivative;
-            if (Math.abs(nextX - x) <= epsilon ||
-                    Math.abs(function.apply(nextX)/Functions.derivative1(funcNumber, nextX)) <= epsilon ||
-                    Math.abs(function.apply(nextX)) <= epsilon ){
+            n++;
+
+            if (Math.abs(nextX - x) <= epsilon && Math.abs(function.apply(nextX)) <= epsilon ){
+                System.out.println("|xi - xi+1|: " + Math.abs(nextX - x) + "|f(xi) - f(xi+1)|: " + Math.abs(function.apply(nextX)));
+                System.out.println("x* = " + nextX + " f(x*) = " + function.apply(nextX));
                 break;
             }
             rowData = TablePrinter.addToList(x, functionValue, functionDerivative, nextX, Math.abs(nextX - x));
@@ -52,8 +56,9 @@ public class Method3 {
             x = nextX;
         }
 
-        List<String> headers = new ArrayList<>(Arrays.asList("x_n", "f(x_n)", "f'(x_n)", "x_n+1", "|x_n+1 - x_n|"));
-        TablePrinter.printTable(headers, tableData);
+//        List<String> headers = new ArrayList<>(Arrays.asList("x_n", "f(x_n)", "f'(x_n)", "x_n+1", "|x_n+1 - x_n|"));
+//        TablePrinter.printTable(headers, tableData);
+//        System.out.println("Корень: x= " + rowData.get(3) + " f(x) " + rowData.get(1)   + " кол-во итераций: " + n);
 
 
     }

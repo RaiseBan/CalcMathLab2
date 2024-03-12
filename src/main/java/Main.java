@@ -11,6 +11,7 @@ public class Main {
         int funcNumber = 1;
         boolean file_flag = false;
         int maxIter = 10;
+        Function function;
         System.out.println("""
                 Формат входного файла:
                 1. Номер функции
@@ -38,8 +39,21 @@ public class Main {
             if (num == 1) {
                 while (true) {
                     System.out.println("Введите номер исследуемой функции (1-3): ");
+                    System.out.println("1) 5.74x^3 - 2.95x^2 - 10.28x + 4.23");
+                    System.out.println("2) x^3 - 0.2x^2 + 0.5x + 1.5");
+                    System.out.println("3) sin(x) + 0.5");
                     try {
                         funcNumber = Integer.parseInt(console.next().trim());
+                        function = Functions.getFunction(funcNumber);
+                        if (funcNumber == 1){
+                            GraphPlotter.draw(-4, 4, function, false);
+                        }
+                        if (funcNumber == 2){
+                            GraphPlotter.draw(-8, 8, function, false);
+                        }
+                        if (funcNumber == 3){
+                            GraphPlotter.draw(-4, 4, function, false);
+                        }
                         break;
                     } catch (NumberFormatException exception) {
                         System.out.println("Попробуйте еще ... раз");
@@ -73,7 +87,7 @@ public class Main {
                     }
                 }
                 while (true) {
-                    System.out.println("Введите номер метода (1, 3, 4):");
+                    System.out.println("Введите номер метода:\n2 - метод хорд\n3 - метод Ньютона\n4 - метод секущих\n5 - метод простых итераций");
                     try {
                         methodNumber = Integer.parseInt(console.next().trim()); //TODO: доделать
                         break;
@@ -119,7 +133,7 @@ public class Main {
 
             }
             TablePrinter.fileFlag = file_flag;
-            Function function = Functions.getFunction(funcNumber);
+            function = Functions.getFunction(funcNumber);
             if (Intervals.hasRoot(a, b, function)) {
                 if (Intervals.checkRootsOnInterval(a, b, function)) {
                     switch (methodNumber) {
@@ -139,6 +153,9 @@ public class Main {
                                 Method3.runMethod(Method3.chooseInitialApproximation(a, b, function, funcNumber), e, maxIter, function, funcNumber);
                             } else {
                                 System.err.println("Не выполняются условия сходимости!");
+                                System.out.println("Попробуем решить...");
+                                Method3.runMethod(Method3.chooseInitialApproximation(a, b, function, funcNumber), e, maxIter, function, funcNumber);
+
                             }
                         }
                         case 4 -> {
@@ -146,15 +163,30 @@ public class Main {
                                 System.out.println("Введите кол-во итераций:");
                                 maxIter = Integer.parseInt(console.next().trim());
                             }
+                            if (Method3.canApplyNewton(funcNumber, a,b)){
+                                System.out.println("Условия сходимости выполнены");
+                            }else {
+                                System.out.println("Условие сходимости не выполняется!\nпопробуем решить...");
+                            }
                             double x0 = Method3.chooseInitialApproximation(a, b, function, funcNumber);
                             if (x0 == a) {
                                 Method4.runMethod(function, x0, x0 + e, e, maxIter);
                             } else {
                                 Method4.runMethod(function, x0 - e, x0, e, maxIter);
                             }
+
+                        }
+                        case 5 -> {
+                            if (!file_flag) {
+                                System.out.println("Введите кол-во итераций:");
+                                maxIter = Integer.parseInt(console.next().trim());
+                            }
+
+                            Method5.runMethod(funcNumber, a, b, e, maxIter);
                         }
                     }
-                    GraphPlotter.draw(a, b, function);
+                    GraphPlotter.draw(a, b, function, true);
+
                 } else {
                     System.out.println("На заданном интервале больше 1 корня!");
                 }
@@ -162,8 +194,29 @@ public class Main {
                 System.out.println("На заданном интервале нет корней!");
             }
         } else {
+            System.out.println("Предлагаемые системы:");
+            System.out.println("-------1-------");
+            System.out.println("/");
+            System.out.println("|" + "0.1*x1^2 + x1 + 0.2*x^2 - 0.3 = 0");
+            System.out.println("|" + "0.2*x1^2 + x2 + 0.1*x1*x2 - 0.7 = 0");
+            System.out.println("\\");
+            System.out.println("-------1-------");
+            System.out.println("|");
+            System.out.println("-------2-------");
+            System.out.println("/");
+            System.out.println("|" + "x1 * x2 + 2 * x2^2 - 12 = 0");
+            System.out.println("|" + "0.2*x1^2 + x2 + 0.1*x1*x2 - 0.7 = 0");
+            System.out.println("\\");
+            System.out.println("-------2-------");
+            System.out.println("-------3-------");
+            System.out.println("/");
+            System.out.println("|" + "x1 + cos(x2 - 1) = 0.8");
+            System.out.println("|" + "x2 - cos(x1) = 2");
+            System.out.println("\\");
+            System.out.println("-------3-------");
             System.out.println("Введите номер системы: ");
             int sysNumber = Integer.parseInt(console.next().trim());
+            GraphPlotter.drawSys(sysNumber, false);
             System.out.println("Начальное приближение: x1");
             double x1 = Double.parseDouble(console.next().trim());
             System.out.println("Начальное приближение: x2");
@@ -174,7 +227,6 @@ public class Main {
             maxIter = Integer.parseInt(console.next().trim());
 
             IterationMethod.solveSystem(sysNumber, x1, x2, e, maxIter);
-            GraphPlotter.drawSys(sysNumber);
         }
 
 

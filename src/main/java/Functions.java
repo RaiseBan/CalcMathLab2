@@ -22,6 +22,15 @@ public class Functions {
         };
     }
 
+    public static double getPhi(int funcNumber, double x, double lambda) {
+        Function function = getFunction(funcNumber);
+        return x + lambda * function.apply(x);
+    }
+
+    public static double getDPhi(int funcNumber, double x, double lambda) {
+        return 1 + lambda * derivative1(funcNumber, x);
+    }
+
     public static double derivative1(int funcNumber, double x) {
         switch (funcNumber) {
             case 1 -> {
@@ -66,6 +75,11 @@ public class Functions {
             case 2 -> {
                 double f1 = x1 * x2 + 2 * x2 * x2 - 12;
                 double f2 = x1 * x1 + 4 * x1 * x2 + 20;
+                return new ArrayList<>(Arrays.asList(f1, f2));
+            }
+            case 3 -> {
+                double f1 = x1 + Math.cos(x2 - 1) - 0.8;
+                double f2 = x2 - Math.cos(x1) - 2;
                 return new ArrayList<>(Arrays.asList(f1, f2));
             }
             default -> {

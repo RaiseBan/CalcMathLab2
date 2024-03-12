@@ -13,6 +13,9 @@ public class IterationMethod {
             case 2 -> {
                 return new ArrayList<>(Arrays.asList(0.0, -4 - ((12 - 2 * x2 * x2) / x2 * x2), (-3 / 4) * x1 * x1 - 5, 0.0));
             }
+            case 3 -> {
+                return new ArrayList<>(Arrays.asList(0.0, Math.sin(x2 - 1), -Math.sin(x1), 0.0));
+            }
             default -> {
                 return null;
             }
@@ -30,6 +33,10 @@ public class IterationMethod {
                 double phi1 = (12 - 2 * x2 * x2) / x2;
                 double phi2 = (-20 - x1 * x1) / 4 * x1;
                 return new ArrayList<>(Arrays.asList(phi1, phi2));
+            }case 3 -> {
+                double phi1 = 0.8 - Math.cos(x2-1);
+                double phi2 = Math.cos(x1) + 2;
+                return new ArrayList<>(Arrays.asList(phi1, phi2));
             }
             default -> {
                 return null;
@@ -39,13 +46,15 @@ public class IterationMethod {
 
 
     private static boolean checkConvergence(List<Double> jacob) {
-        // Вычисляем элементы матрицы Якоби
-
-        // Вычисляем норму бесконечности матрицы Якоби
         double row1Norm = Math.abs(jacob.get(0)) + Math.abs(jacob.get(1));
+        System.out.println(jacob.get(0) + " " + jacob.get(1));
+//        System.out.println(Math.abs(jacob.get(0))+ " " + Math.abs(jacob.get(1)));
+//        System.out.println(row1Norm);
         double row2Norm = Math.abs(jacob.get(2)) + Math.abs(jacob.get(3));
+        System.out.println(jacob.get(2) + " " + jacob.get(3));
         double infNorm = Math.max(row1Norm, row2Norm);
-
+//        System.out.println(Math.abs(jacob.get(2))+ " " + Math.abs(jacob.get(3)));
+//        System.out.println(row2Norm);
         // Проверяем условие сходимости
         return infNorm < 1;
     }
@@ -67,6 +76,7 @@ public class IterationMethod {
 
         while (true) {
             List<Double> eqs = getSystem(systemNumber, x1, x2);
+
             newX1 = eqs.get(0);
             newX2 = eqs.get(1);
 
@@ -75,13 +85,16 @@ public class IterationMethod {
 
             x1 = newX1;
             x2 = newX2;
+            List<Double> funcc = Functions.getDefaultSystem(systemNumber, x1, x2);
             iteration++;
 
-            System.out.println("Итерация " + iteration + ": x1 = " + x1 + ", x2 = " + x2);
-            System.out.println("Погрешности: |x1(k) - x1(k-1)| = " + error1 + ", |x2(k) - x2(k-1)| = " + error2);
+//            System.out.println("Итерация " + iteration + ": x1 = " + x1 + ", x2 = " + x2);
+//            System.out.println("Погрешности: |x1(k) - x1(k-1)| = " + error1 + ", |x2(k) - x2(k-1)| = " + error2);
 
 
-            if (Math.max(error1, error2) < e) {
+            if (Math.abs(funcc.get(0)) < e && Math.abs(funcc.get(1)) < e ) {
+                System.out.println(x1 + " " + x2 +  " " + funcc.get(0) + " " + funcc.get(1));
+                System.out.println("Итеации " + iteration);
                 break;
             }
 
@@ -99,8 +112,8 @@ public class IterationMethod {
     }
 
     private static void checkSolution(int systemNumber, double x1, double x2) {
-        System.out.println("Вектор невязок: ");
-        System.out.printf("e = %.4f\n", Math.abs(getSystem(systemNumber, x1, x2).get(0) - x1));
-        System.out.printf("e = %.4f\n", Math.abs(getSystem(systemNumber, x1, x2).get(1) - x2));
+        System.out.println("Проверка решения при найденных x1, x2: ");
+        System.out.printf("e = %.10f\n", Math.abs(getSystem(systemNumber, x1, x2).get(0) - x1));
+        System.out.printf("e = %.10f\n", Math.abs(getSystem(systemNumber, x1, x2).get(1) - x2));
     }
 }
